@@ -123,7 +123,7 @@ foreach ($email_contact as $email_to){
 ?>
  
 <!-- include your own success html here -->
- 
+<h1>New Collaboration Enquiry Form</h1> 
 Thank you for contacting us. We will be in touch with you very soon.
  
 <?php

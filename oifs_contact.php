@@ -36,6 +36,7 @@ echo '<div style="clear: both;"></div>';
 echo '</div>';
 echo '<hr>';
 ?>
+<h1>New Collaboration Enquiry Form</h1>
 <form name="contactform" method="post" action="send_form_email.php">
 <table width="100%" border="0" style="border:none;">
 <tr class="nohover"><td Width=22%>First Name:</td><td width=78%><input type="text" name="FirstName" size="20"></td></tr>
