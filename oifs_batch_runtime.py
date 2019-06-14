@@ -80,12 +80,26 @@ def get_times(batch):
 	cursor.close()
 	return np.array(queue_time),np.array(elapsed_time),np.array(run_time)
 
+def get_percent_complete(batch):
+        db = MySQLdb.connect(BatchDB.host,BatchDB.batchUser,BatchDB.batchPass,BatchDB.dbexpt )
+        cursor = db.cursor(MySQLdb.cursors.DictCursor)
+
+        query_batches2 = 'select (count(r.id)/b.number_of_workunits)*100 as completed from '+BatchDB.dbboinc+'.result r JOIN '+BatchDB.dbexpt+'.cpdn_workunit w on r.workunitid=w.wuid JOIN '+BatchDB.dbexpt+'.cpdn_batch b on b.id=w.cpdn_batch where w.cpdn_batch='+str(batch)+' and r.outcome=1;'
+        # Get numbers of results in different states.
+        cursor.execute(query_batches2)
+        lbatch=cursor.fetchall()
+        completed=float(lbatch[0]['completed'])
+        cursor.close()
+        return completed
+
+
 def plot_batch_run_time(batch, queue,batch_prefix, out_path):
 	# Set the plot font size
 	font = {'family' : 'sans-serif','size'   : 14}
 	matplotlib.rc('font', **font)
 
 	queue_time,elapsed_time,run_time=get_times(batch)
+	percent_complete=get_percent_complete(batch)
 
 	fig = plt.figure()      
 	ax=fig.add_subplot(1,1,1)
@@ -100,7 +114,7 @@ def plot_batch_run_time(batch, queue,batch_prefix, out_path):
         sns.distplot(run_time,kde=False,fit=stats.genextreme, color="mediumpurple", label="Run time",fit_kws={"linewidth":2.5,"color":"mediumpurple"},ax=ax)
 	ax2=ax.twinx()
 	sns.distplot(elapsed_time, hist_kws={'cumulative': True},kde_kws=dict(cumulative=True), color="RoyalBlue", label="Elapsed time (cumulative)", ax=ax2)
-	ax.set_title("Batch "+batch_prefix+str(batch)+" Timings "+today_title,fontsize=16)
+	ax.set_title("Batch "+batch_prefix+str(batch)+" Timings: "+str(np.round(percent_complete,2))+"% Complete: "+today_title,fontsize=16)
 
         anchored_text = AnchoredText(stats_text,loc=7,frameon=False)
         ax2.add_artist(anchored_text)
