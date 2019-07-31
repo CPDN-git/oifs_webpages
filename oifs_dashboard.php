@@ -11,15 +11,29 @@ $user= $xml->batch_user;
 $pass= $xml->batch_passwd;
 $hostname = gethostname();
 
+$ms_host= $xml->ancil_db_host;
+$ms_dbname=$xml->ancil_db_name;
+$ms_boinc_dbname=$xml->ancil_boinc_db_name;
+$ms_user= $xml->ancil_user;
+$ms_pass= $xml->ancil_passwd;
+
 # include the table tag generatora 
 require_once("includes/html_table.class.php");
 
 $table="cpdn_batch b join $dbname.cpdn_project p on p.id=b.projectid";
+$ms_table="cpdn_batch b join $ms_dbname.cpdn_project p on p.id=b.projectid";
 
 $fields='concat(\'<a href='.$host_url_path.'/oifs_batch_info.php?batchid=\',b.id,\'>'.$batch_prefix.'\',b.id,\'</a>\') as Batch,';
-#echo $fields;
-$fields_open="$fields b.number_of_workunits as 'Ensemble Size', date(b.submit_time) as 'Submit Date', b.name as Name,substring_index(b.owner,'<',1) as Owner, b.description as Description";
-$fields_closed="$fields b.number_of_workunits as 'Ensemble Size',date(b.submit_time) as 'Submit Date', b.archive_status as Status, b.name as Name,substring_index(b.owner,'<',1) as Owner, b.description as Description";
+$ms_fields='concat(\'<a href='.$ms_host_url_path.'/oifs_batch_info.php?batchid=\',b.id,\'>\',b.id,\'</a>\') as Batch,';
+
+$fopen=" b.number_of_workunits as 'Ensemble Size', date(b.submit_time) as 'Submit Date', b.name as Name,substring_index(b.owner,'<',1) as Owner, b.description as Description";
+$fclosed=" b.number_of_workunits as 'Ensemble Size',date(b.submit_time) as 'Submit Date', b.archive_status as Status, b.name as Name,substring_index(b.owner,'<',1) as Owner, b.description as Description";
+
+$fields_open="$fields $fopen";
+$fields_closed="$fields $fclosed";
+
+$ms_fields_open="$ms_fields $fopen";
+$ms_fields_closed="$ms_fields $fclosed";
 
 $condition_open="WHERE b.ended=0 and p.name='OpenIFS@HOME'";
 $condition_closed="WHERE b.ended=1 and p.name='OpenIFS@HOME'";
@@ -82,20 +96,22 @@ echo '<hr>';
 </tr>
 </table>
 <?php
-echo '<br>';
-echo '<h2>Existing Batches</h2>';
-echo '<h3>Dev Site</h3>';
+echo '<br><hr><h2>Open Batches</h2>';
 
 $r = escapeshellcmd( $python_env.' '.$base_path.'oifs_webpages/oifs_batch_status.py CPDN_DEV');
 $output = shell_exec($r);
 
-echo '<img src="oifs_batch_statistics.png" alt="oifs_batch_stats" style="width:50%">';
-
+$r = escapeshellcmd( $python_env.' '.$base_path.'oifs_webpages/oifs_main_batch_status.py CPDN_DEV');
+$output = shell_exec($r);
 
 $query_open ="SELECT $fields_open FROM $table $condition_open $order";
 $query_closed ="SELECT $fields_closed FROM $table $condition_closed $order";
+
+$ms_query_open ="SELECT $ms_fields_open FROM $ms_table $condition_open $order";
+$ms_query_closed ="SELECT $ms_fields_closed FROM $ms_table $condition_closed $order";
+
 $link = mysqli_connect($host,$user,$pass,$dbname) or die("Error " . mysqli_error($link));
-$result_open = $link->query($query_open) or die("Error in the consult.." . mysqli_error($link));
+$link_ms = mysqli_connect($ms_host,$ms_user,$ms_pass,$ms_dbname) or die("Error " . mysqli_error($link_ms));
 
 class Auto_Table extends HTML_table     {
         private $db_result = NULL;
@@ -156,16 +172,28 @@ function make_table($db_result){
         }
 }
 
-
-
-$tbl = new Auto_Table('myTable', 'tablesorter');
-#$tbl->addCaption($query, 'cap', array('id'=> 'tblCap') )
 echo "<h3>Open Dev Batches</h3>";
+echo '<img src="oifs_batch_statistics.png" alt="oifs_batch_stats" style="width:50%">';
+$result_open = $link->query($query_open) or die("Error in the consult.." . mysqli_error($link));
+$tbl = new Auto_Table('myTable', 'tablesorter');
 $tbl->make_table($result_open);
 $tbl->make_script('script',' ',array('src' => "jquery/jquery-latest.js"));
 echo $tbl->display_script();
 echo $tbl->display();
 mysqli_free_result($result_open);
+
+echo '<br><hr style="border-top: dashed 1px;"><h3>Open Main Batches</h3>';
+echo '<img src="oifs_batch_statistics_main.png" alt="oifs_main_batch_stats" style="width:50%">';
+$ms_result_open = $link_ms->query($ms_query_open) or die("Error in the consult.." . mysqli_error($link_ms));
+$tbl3 = new Auto_Table('myTable', 'tablesorter');
+$tbl3->make_table($ms_result_open);
+$tbl3->make_script('script',' ',array('src' => "jquery/jquery-latest.js"));
+echo $tbl3->display_script();
+echo $tbl3->display();
+mysqli_free_result($ms_result_open);
+
+
+echo '<br><hr><h2>Closed Batches</h3>';
 echo "<h3>Closed Dev Batches</h3>";
 $result_closed = $link->query($query_closed) or die("Error in the consult.." . mysqli_error($link));
 $tbl2 = new Auto_Table('myTable', 'tablesorter');
@@ -173,8 +201,18 @@ $tbl2->make_table($result_closed);
 $tbl2->make_script('script',' ',array('src' => "jquery/jquery-latest.js"));
 echo $tbl2->display_script();
 echo $tbl2->display();
- mysqli_free_result($result_closed);
- mysqli_close ($link);
+mysqli_free_result($result_closed);
 
+echo '<br><hr style="border-top: dashed 1px;"><h3>Closed Main Batches</h3>';
+$ms_result_closed = $link_ms->query($ms_query_closed) or die("Error in the consult.." . mysqli_error($link_ms));
+$tbl4 = new Auto_Table('myTable', 'tablesorter');
+$tbl4->make_table($ms_result_closed);
+$tbl4->make_script('script',' ',array('src' => "jquery/jquery-latest.js"));
+echo $tbl4->display_script();
+echo $tbl4->display();
+mysqli_free_result($ms_result_closed);
+
+mysqli_close ($link);
+mysqli_close ($link_ms);
 
  ?>
