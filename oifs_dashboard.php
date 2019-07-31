@@ -64,6 +64,16 @@ echo <<<EOH
                         }
                 </style>
 <link rel="stylesheet" href="cpdn.css">
+<script type="text/javascript">
+function condDisp(section){
+	var x = document.getElementById(section);
+	if (x.style.display ==="none") {
+		x.style.display = "block";
+	} else {
+		x.style.display = "none";
+	}
+}
+</script>
 </head>
 <body>
 EOH;
@@ -174,6 +184,7 @@ function make_table($db_result){
 
 echo "<h3>Open Dev Batches</h3>";
 echo '<img src="oifs_batch_statistics.png" alt="oifs_batch_stats" style="width:50%">';
+echo '<div id="DevOpen">';
 $result_open = $link->query($query_open) or die("Error in the consult.." . mysqli_error($link));
 $tbl = new Auto_Table('myTable', 'tablesorter');
 $tbl->make_table($result_open);
@@ -181,9 +192,13 @@ $tbl->make_script('script',' ',array('src' => "jquery/jquery-latest.js"));
 echo $tbl->display_script();
 echo $tbl->display();
 mysqli_free_result($result_open);
+echo '</div>';
+echo '<br>';
+echo '<button onclick="condDisp(\'DevOpen\')">Show/Hide Details</button>';
 
 echo '<br><hr style="border-top: dashed 1px;"><h3>Open Main Batches</h3>';
 echo '<img src="oifs_batch_statistics_main.png" alt="oifs_main_batch_stats" style="width:50%">';
+echo '<div id="MainOpen">';
 $ms_result_open = $link_ms->query($ms_query_open) or die("Error in the consult.." . mysqli_error($link_ms));
 $tbl3 = new Auto_Table('myTable', 'tablesorter');
 $tbl3->make_table($ms_result_open);
@@ -191,10 +206,13 @@ $tbl3->make_script('script',' ',array('src' => "jquery/jquery-latest.js"));
 echo $tbl3->display_script();
 echo $tbl3->display();
 mysqli_free_result($ms_result_open);
-
+echo '</div>';
+echo '<br>';
+echo '<button onclick="condDisp(\'MainOpen\')">Show/Hide Details</button>';
 
 echo '<br><hr><h2>Closed Batches</h3>';
 echo "<h3>Closed Dev Batches</h3>";
+echo '<div id="DevClosed" style="display:none">';
 $result_closed = $link->query($query_closed) or die("Error in the consult.." . mysqli_error($link));
 $tbl2 = new Auto_Table('myTable', 'tablesorter');
 $tbl2->make_table($result_closed);
@@ -202,8 +220,12 @@ $tbl2->make_script('script',' ',array('src' => "jquery/jquery-latest.js"));
 echo $tbl2->display_script();
 echo $tbl2->display();
 mysqli_free_result($result_closed);
+echo '</div>';
+echo '<br>';
+echo '<button onclick="condDisp(\'DevClosed\')">Show/Hide Details</button>';
 
 echo '<br><hr style="border-top: dashed 1px;"><h3>Closed Main Batches</h3>';
+echo '<div id="MainClosed" style="display:none">';
 $ms_result_closed = $link_ms->query($ms_query_closed) or die("Error in the consult.." . mysqli_error($link_ms));
 $tbl4 = new Auto_Table('myTable', 'tablesorter');
 $tbl4->make_table($ms_result_closed);
@@ -211,7 +233,9 @@ $tbl4->make_script('script',' ',array('src' => "jquery/jquery-latest.js"));
 echo $tbl4->display_script();
 echo $tbl4->display();
 mysqli_free_result($ms_result_closed);
-
+echo '</div>';
+echo '<br>';
+echo '<button onclick="condDisp(\'MainClosed\')">Show/Hide Details</button>';
 mysqli_close ($link);
 mysqli_close ($link_ms);
 
