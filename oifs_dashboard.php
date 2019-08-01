@@ -81,7 +81,7 @@ EOH;
 echo '<div class="wrap" style="width:100%">';
 echo '<div style="width:100%">';
 echo '<img src="img/OIFS_Home_logo.png" alt="OpenIFS@home" style="width:200px">';
-echo '<img src="img/CPDN_logo_abbrv_sq.png" alt="CPDN" style="width:90px; float:right;">';
+echo '<img src="img/CPDN_abbrv_logo.png" alt="CPDN" style="width:250px; float:right;">';
 echo '</div>';
 echo '<div style="clear: both;"></div>';
 echo '</div>';
@@ -100,7 +100,8 @@ echo '<hr>';
 <td width="5%"></td>
 <td><a href="oifs_upload_form.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Upload Files</button></a></td>
 <td><a href="oifs_search.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Search Files</button></a></td>
-<td><a href="oifs_xml_generation.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Ensembles</button></a></td>
+<td><a href="oifs_xml_generation.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Dev Ensemble</button></a></td>
+<td><a href="https://www.cpdn.org/cpdnboinc/oifs_xml_generation.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Main Ensemble</button></a></td>
 <td><a href="https://trello.com/b/mQvpbUci/cpdn-dev-site-submissions"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Dev Site Trello</button></a></td>
 <td><a href="https://trello.com/b/fnvZafWI/cpdn-main-work-site-submissions"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Main Site Trello</button></a></td>
 </tr>
