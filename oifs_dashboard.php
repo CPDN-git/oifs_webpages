@@ -35,8 +35,8 @@ $fields_closed="$fields $fclosed";
 $ms_fields_open="$ms_fields $fopen";
 $ms_fields_closed="$ms_fields $fclosed";
 
-$condition_open="WHERE b.ended=0 and p.name='OpenIFS@HOME'";
-$condition_closed="WHERE b.ended=1 and p.name='OpenIFS@HOME'";
+$condition_open="WHERE b.ended=0 and p.name='OpenIFSATHOME'";
+$condition_closed="WHERE b.ended=1 and p.name='OpenIFSATHOME'";
 
 $order= 'order by b.id DESC';
 
@@ -96,12 +96,12 @@ echo '<hr>';
 <tr class="nohover">
 <td><a href="https://www.ecmwf.int/en/research/projects/openifs"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">OpenIFS</button></a></td>
 <td><a href="https://drive.google.com/open?id=12_Dfl_Aw1Zbw_AN3T71qINzTWzb1ssfM"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Training Notes</button></a></td>
-<td><a href="https://www.cpdn.org/cpdnboinc/cpdn_publications.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Publication List</button></a></td>
+<td><a href="https://www.cpdn.org/cpdn_publications.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Publication List</button></a></td>
 <td width="5%"></td>
 <td><a href="oifs_upload_form.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Upload Files</button></a></td>
 <td><a href="oifs_search.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Search Files</button></a></td>
 <td><a href="oifs_xml_generation.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Dev Ensemble</button></a></td>
-<td><a href="https://www.cpdn.org/cpdnboinc/oifs_xml_generation.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Main Ensemble</button></a></td>
+<td><a href="https://www.cpdn.org/oifs_xml_generation.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Main Ensemble</button></a></td>
 <td><a href="https://trello.com/b/mQvpbUci/cpdn-dev-site-submissions"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Dev Site Trello</button></a></td>
 <td><a href="https://trello.com/b/fnvZafWI/cpdn-main-work-site-submissions"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Main Site Trello</button></a></td>
 </tr>
