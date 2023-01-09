@@ -89,8 +89,9 @@ def query_database2(sbatch):
 
 	query_batches = 'SELECT w.cpdn_batch as batch,b.name as batch_name, r.outcome as outcome, r.server_state as server_state, count(*) as count \
 		FROM '+BatchDB.dbboinc+'.result r JOIN '+BatchDB.dbexpt+'.cpdn_workunit w \
-		ON r.workunitid=w.wuid JOIN '+BatchDB.dbexpt+'.cpdn_batch b ON b.id=w.cpdn_batch'
-	condition=' WHERE r.outcome<=3 and b.ended=0 and b.projectid=25 and w.cpdn_batch>='+str(sbatch)
+		ON r.workunitid=w.wuid JOIN '+BatchDB.dbexpt+'.cpdn_batch b ON b.id=w.cpdn_batch \
+        JOIN 'BatchDB.dbboinc+'.app a ON a.id=b.appid'
+	condition=' WHERE r.outcome<=3 and b.ended=0 and a.name like "oifs%" and w.cpdn_batch>='+str(sbatch)
 	group_by=' GROUP BY w.cpdn_batch, r.outcome,r.server_state;'
 
 	# Get numbers of results in different states.
@@ -146,8 +147,9 @@ def get_test_batches(sbatch):
 	cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
 	query_batches = 'SELECT b.id as test_batch FROM '+BatchDB.dbexpt+'.cpdn_batch b \
-		JOIN '+BatchDB.dbexpt+'.cpdn_project p ON p.id=b.projectid'
-	condition=' WHERE p.name="TESTING" and b.id>='+str(sbatch)+';'
+		JOIN '+BatchDB.dbexpt+'.cpdn_project p ON p.id=b.projectid \
+        JOIN 'BatchDB.dbboinc+'.app a ON a.id=b.appid'
+	condition=' WHERE p.name="TESTING" and b.id>='+str(sbatch)+' and a.name like  "oifs%";'
 
 	# Get numbers of results in different states.
 	cursor.execute(query_batches+condition)
@@ -164,7 +166,7 @@ def get_sbatch():
 
 	cursor = db.cursor(MySQLdb.cursors.DictCursor)
 
-	query_batches = 'SELECT b.id as last_batch FROM '+BatchDB.dbexpt+'.cpdn_batch b WHERE b.ended=0 and b.projectid=25'
+	query_batches = 'SELECT b.id as last_batch FROM '+BatchDB.dbexpt+'.cpdn_batch b JOIN 'BatchDB.dbboinc+'.app a ON a.id=b.appid WHERE b.ended=0 and a.name like "oifs%"'
 	order_by=' ORDER BY b.id DESC LIMIT 51;'
 	# Get numbers of results in different states.
 	cursor.execute(query_batches+order_by)
