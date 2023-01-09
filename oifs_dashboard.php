@@ -20,8 +20,8 @@ $ms_pass= $xml->ancil_passwd;
 # include the table tag generatora 
 require_once("includes/html_table.class.php");
 
-$table="cpdn_batch b join $dbname.cpdn_project p on p.id=b.projectid";
-$ms_table="cpdn_batch b join $ms_dbname.cpdn_project p on p.id=b.projectid";
+$table="cpdn_batch b join $dbname.cpdn_project p on p.id=b.projectid join $boinc_dbname.app a on a.id=b.appid";
+$ms_table="cpdn_batch b join $ms_dbname.cpdn_project p on p.id=b.projectid join $ms_boinc_dbname.app a on a.id=appid";
 
 $fields='concat(\'<a href='.$host_url_path.'/oifs_batch_info.php?batchid=\',b.id,\'>'.$batch_prefix.'\',b.id,\'</a>\') as Batch,';
 $ms_fields='concat(\'<a href='.$ms_host_url_path.'/oifs_batch_info.php?batchid=\',b.id,\'>\',b.id,\'</a>\') as Batch,';
@@ -35,8 +35,8 @@ $fields_closed="$fields $fclosed";
 $ms_fields_open="$ms_fields $fopen";
 $ms_fields_closed="$ms_fields $fclosed";
 
-$condition_open="WHERE b.ended=0 and p.name='OpenIFSATHOME'";
-$condition_closed="WHERE b.ended=1 and p.name='OpenIFSATHOME'";
+$condition_open="WHERE b.ended=0 and a.name LIKE 'oifs%'";
+$condition_closed="WHERE b.ended=1 and a.name LIKE 'oifs%'";
 
 $order= 'order by b.id DESC';
 
