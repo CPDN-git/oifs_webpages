@@ -120,6 +120,16 @@ $pct_unsent=round($row_stats[1]/$batch_tot*100);
 
 $nbsp="";
 echo "<br><hr>";
+$tmp_path=$base_path.'tmp_batch/';
+$r1 = escapeshellcmd( $python_env.' '.$script_path.'batch_failure_analysis.py '.$batchid.' '.$project);
+$output = shell_exec($r1);
+$fail_img=$tmp_path.'Batch_'.$batch_prefix.$batchid.'_fail_analysis.png';
+if (file_exists($fail_img))
+{---
+        $b64image = base64_encode(file_get_contents($fail_img));
+            echo "<img src ='data:image/png;base64,$b64image' alt='failure_analysis' style='width:80%;float:right'>";
+}
+
 echo "<h2>Batch Statistics</h2><br><strong>Last updated on:</strong> ".$row_stats[0]."<br>";
 echo "<br><a href=".$host_url_path."/batch_completions.php?batchid=".$batchid."><font color=#00FF7F><strong>Success: </strong></font>$nbsp".$row_stats[3]." (".$pct_success."%)</a>";
 echo "<br><font color=#FF8080><strong>Fails: </strong></font>$nbsp".$row_stats[5]." (".$pct_fail."%)";
@@ -129,7 +139,7 @@ echo "<br><a href=".$host_url_path."/batch_unsent.php?batchid=".$batchid."><font
 
 echo "<br>";
 $tmp_path=$base_path.'tmp_batch/';
-$r = escapeshellcmd( $python_env.' '.$base_path.'oifs_webpages/oifs_batch_runtime.py '.$batchid.' CPDN_DEV');
+$r = escapeshellcmd( $python_env.' '.$base_path.'oifs_webpages/oifs_batch_runtime.py '.$batchid.' '.$project);
 $output = shell_exec($r);
 $batch_img=$tmp_path.'Batch_'.$batch_prefix.$batchid.'_timings.png';
 if (file_exists($batch_img))
