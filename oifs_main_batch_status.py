@@ -6,8 +6,8 @@
 # Details: Run with inputs batch number
 #-----------------------------------------------------------------------
 import argparse
-import os, sys, time, MySQLdb, hashlib
-import MySQLdb.cursors
+import os, sys, time, pymysql, hashlib
+import pymysql.cursors
 import numpy as np
 import collections
 from xml.sax.saxutils import escape  # needed to make our XML safe.
@@ -62,11 +62,15 @@ def ParseConfig(xmlfilename):
 
 def fetch_rows(query, parameters=None):
     """Fetch dictionary rows and release database resources on every exit."""
-    db = MySQLdb.connect(
-        BatchDB.host, BatchDB.batchUser, BatchDB.batchPass, BatchDB.dbexpt
+    db = pymysql.connect(
+        host=BatchDB.host,
+        user=BatchDB.batchUser,
+        password=BatchDB.batchPass,
+        db=BatchDB.dbexpt,
+        unix_socket="/storage/mysql/mysql.sock",
     )
     try:
-        cursor = db.cursor(MySQLdb.cursors.DictCursor)
+        cursor = db.cursor(pymysql.cursors.DictCursor)
         try:
             cursor.execute(query, parameters)
             return cursor.fetchall()
@@ -300,17 +304,16 @@ def plot_batch_stats(out_path,batch_prefix):
 
 def main():
     parser = argparse.ArgumentParser(description='Plot statistics for current OpenIFS batches.')
-    parser.add_argument("project", choices=("CPDN", "CPDN_DEV", "CPDN_ALPHA"))
+    parser.add_argument("project", choices=("CPDN", "CPDN_DEV"))
     args = parser.parse_args()
 
     print(time.strftime("%Y/%m/%d %H:%M:%S") + " Starting oifs_main_batch_status.py")
     project = args.project
-    if gethostname() in ("caerus", "hesperus"):
+    if gethostname() in ("aurai", "hesperus"):
         project = "CPDN"
     project_paths = {
         "CPDN": "/storage/www/cpdnboinc",
         "CPDN_DEV": "/storage/www/cpdnboinc_dev",
-        "CPDN_ALPHA": "/storage/www/cpdnboinc_alpha",
     }
     project_path = project_paths[project]
     config = os.path.join(project_path, "ancil_batch_user_config.xml")

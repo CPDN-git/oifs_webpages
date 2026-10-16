@@ -1,5 +1,5 @@
 # Python 3 dependencies for the batch statistics and runtime scripts.
-mysqlclient
+PyMySQL
 numpy
 matplotlib
 scipy
