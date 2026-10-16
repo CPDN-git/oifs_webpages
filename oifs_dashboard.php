@@ -42,9 +42,10 @@ $xml = simplexml_load_file(PROJECT_PATH . "ancil_batch_user_config.xml")
 
 //  Set the global include paths, including ours.
 set_include_path(
-		get_include_path() . 
-		PATH_SEPARATOR . BOINC_INC .
-		PATH_SEPARATOR . CPDN_LOCAL ); 
+    get_include_path() .
+    PATH_SEPARATOR . BOINC_INC .
+    PATH_SEPARATOR . CPDN_LOCAL
+);
 
 //  Set the database variables
 $host= $xml->db_host;
@@ -81,7 +82,7 @@ $condition_closed="WHERE b.ended=1 and a.name LIKE 'oifs%'";
 
 $order= 'order by b.id DESC';
 
-$tablesorter_class='cpdnTable';
+$table_class='cpdnTable';
 
 
 echo <<<EOH
@@ -95,12 +96,12 @@ echo <<<EOH
 <script type="text/javascript">
 
 function condDisp(section){
-	var x = document.getElementById(section);
-	if (x.style.display === "none") {
-		x.style.display = "block";
-	} else {
-		x.style.display = "none";
-	}
+    var x = document.getElementById(section);
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
 }
 </script>
 </head>
@@ -122,8 +123,8 @@ EOH;
 <td><a href="https://www.ecmwf.int/en/research/projects/openifs"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">OpenIFS</button></a></td>
 <td><a href="https://drive.google.com/open?id=12_Dfl_Aw1Zbw_AN3T71qINzTWzb1ssfM"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Training Notes</button></a></td>
 <td width="5%"></td>
-<td><a href="oifs_upload_form.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Upload Files</button></a></td>
-<td><a href="oifs_search.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Search Files</button></a></td>
+<td><a href="/cpdn/oifs_upload_form.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Upload Files</button></a></td>
+<td><a href="/cpdn/oifs_search.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Search Files</button></a></td>
 <td><a href="https://main.cpdn.org/cpdn/oifs_xml_generation.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Main Ensemble</button></a></td>
 <td><a href="https://trello.com/b/fnvZafWI/cpdn-main-work-site-submissions"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Main Site Trello</button></a></td>
 </tr>
@@ -142,8 +143,8 @@ $query_closed ="SELECT $fields_closed FROM $table $condition_closed $order";
 $ms_query_open ="SELECT $ms_fields_open FROM $ms_table $condition_open $order";
 $ms_query_closed ="SELECT $ms_fields_closed FROM $ms_table $condition_closed $order";
 
-$link = mysqli_connect($host,$user,$pass,$dbname) or die("Error " . mysqli_error($link));
-$link_ms = mysqli_connect($ms_host,$ms_user,$ms_pass,$ms_dbname) or die("Error " . mysqli_error($link_ms));
+$link = mysqli_connect($host,$user,$pass,$dbname) or die("Error " . mysqli_connect_error());
+$link_ms = mysqli_connect($ms_host,$ms_user,$ms_pass,$ms_dbname) or die("Error " . mysqli_connect_error());
 
 class Auto_Table extends HTML_table     {
         private $db_result = NULL;
@@ -210,7 +211,7 @@ echo '<h2>Open Main Batches</h2>';
 echo '<img src="/oifs_batch_statistics_main.png" alt="oifs_main_batch_stats" style="width:50%">';
 echo '<div id="MainOpen">';
 $ms_result_open = $link_ms->query($ms_query_open) or die("Error in the consult.." . mysqli_error($link_ms));
-$tbl3 = new Auto_Table('myTable', 'tablesorter');
+$tbl3 = new Auto_Table('MainOpenTable', $table_class);
 $tbl3->make_table($ms_result_open);
 echo $tbl3->display();
 mysqli_free_result($ms_result_open);
@@ -218,10 +219,10 @@ echo '</div>';
 echo '<br>';
 echo '<button onclick="condDisp(\'MainOpen\')">Show/Hide Details</button>';
 
-echo '<br><hr><h2>Closed Batches</h3>';
+echo '<br><hr><h2>Closed Batches</h2>';
 echo '<div id="MainClosed" style="display:none">';
 $ms_result_closed = $link_ms->query($ms_query_closed) or die("Error in the consult.." . mysqli_error($link_ms));
-$tbl4 = new Auto_Table('myTable', 'tablesorter');
+$tbl4 = new Auto_Table('MainClosedTable', $table_class);
 $tbl4->make_table($ms_result_closed);
 echo $tbl4->display();
 mysqli_free_result($ms_result_closed);
@@ -230,5 +231,6 @@ echo '<br>';
 echo '<button onclick="condDisp(\'MainClosed\')">Show/Hide Details</button>';
 mysqli_close ($link);
 mysqli_close ($link_ms);
+echo '</body></html>';
 
  ?>
