@@ -1,3 +1,38 @@
+<?php
+// Force PHP to show errors
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// =========================================================================
+// 1. SERVER-SIDE PATHS (PHP) - Always use explicit absolute paths
+// =========================================================================
+define('PROJECT_PATH', realpath(__DIR__ . '/../../..') . '/');   // i.e. /storage/www/cpdnboinc
+define('CPDN_LOCAL',   __DIR__ );
+define('BOINC_INC',    PROJECT_PATH . 'html/inc/');
+define('LOCAL_INC',    __DIR__ . '/include/');
+
+// =========================================================================
+// 2. CLIENT-SIDE PATHS (HTML) - *MUST* always start with "/" to target the domain root
+//    e.g. src="/img/mylogo.png"  and not  src="../img/mylogo.png"
+//    Where "/img/mylogo.png"   means  main.cpdn.org/img/mylogo.png
+// =========================================================================
+
+
+//  Now switch to boinc's html root so all the includes load correctly
+chdir(CPDN_LOCAL . '/..');
+
+require_once(BOINC_INC . 'util.inc');
+require_once(BOINC_INC . 'user.inc');
+require_once(BOINC_INC . 'oifs_uploaders.inc');
+require_once(BOINC_INC . 'batch_site_config.inc');
+
+set_include_path(
+    get_include_path() .
+    PATH_SEPARATOR . BOINC_INC .
+    PATH_SEPARATOR . CPDN_LOCAL
+);
+?>
 <html>
 <style>
 img.one {
@@ -14,18 +49,13 @@ img.two {
 
 
 # include the table tag generatora
-require_once("../inc/util.inc");
-require_once("../inc/user.inc");
-require_once("../inc/oifs_uploaders.inc");
-require_once("../inc/batch_site_config.inc");
 
 $batchid=get_int('batchid');
 $user = get_logged_in_user();
 if (in_array($user->email_addr,$allowed_uploaders)){
 
 
-set_include_path(get_include_path() . PATH_SEPARATOR . $project_path."html/inc");
-$xml=simplexml_load_file($project_path."ancil_batch_user_config.xml") or die("Error: Cannot create object");
+$xml=simplexml_load_file(PROJECT_PATH . 'ancil_batch_user_config.xml') or die("Error: Cannot create object");
 
 $host= $xml->db_host;
 $dbname=$xml->db_name;
@@ -44,12 +74,12 @@ $img_name2= "Batch_".$batch_prefix.$batchid."_timings.png";
 echo '<head>';
 echo '<title>CPDN Statistics</title>';
 echo '<META NAME="ROBOTS" CONTENT="NOINDEV, NOFOLLOW">';
-echo '<link rel="stylesheet" href="cpdn.css">';
+echo '<link rel="stylesheet" href="/cpdn.css">';
 echo '</head>';
 echo '<div class="wrap" style="width:100%">';
 echo '<div style="width:100%">';
-echo '<img src="img/OIFS_Home_logo.png" alt="OpenIFS@home" style="width:200px">';
-echo '<img src="img/CPDN_abbrv_logo.png" alt="CPDN" style="width:250px; float:right;">';
+echo '<img src="/img/OIFS_Home_logo.png" alt="OpenIFS@home" style="width:200px">';
+echo '<img src="/img/CPDN_abbrv_logo.png" alt="CPDN" style="width:250px; float:right;">';
 echo '</div>';
 echo '<div style="clear: both;"></div>';
 echo '</div>';

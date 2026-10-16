@@ -1,13 +1,39 @@
 <?php
-require_once("../inc/util.inc");
-require_once("../inc/user.inc");
-require_once("../inc/batch_site_config.inc");
+// Force PHP to show errors
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Report simple running errors
-error_reporting(E_ERROR | E_WARNING | E_PARSE);
+// =========================================================================
+// 1. SERVER-SIDE PATHS (PHP) - Always use explicit absolute paths
+// =========================================================================
+define('PROJECT_PATH', realpath(__DIR__ . '/../../..') . '/');   // i.e. /storage/www/cpdnboinc
+define('CPDN_LOCAL',   __DIR__ );
+define('BOINC_INC',    PROJECT_PATH . 'html/inc/');
+define('LOCAL_INC',    __DIR__ . '/include/');
 
-set_include_path(get_include_path() . PATH_SEPARATOR . $project_path."html/inc");
-$xml=simplexml_load_file($project_path."ancil_batch_user_config.xml") or die("Error: Cannot create object");
+// =========================================================================
+// 2. CLIENT-SIDE PATHS (HTML) - *MUST* always start with "/" to target the domain root
+//    e.g. src="/img/mylogo.png"  and not  src="../img/mylogo.png"
+//    Where "/img/mylogo.png"   means  main.cpdn.org/img/mylogo.png
+// =========================================================================
+
+
+//  Now switch to boinc's html root so all the includes load correctly
+chdir(CPDN_LOCAL . '/..');
+
+require_once(BOINC_INC . 'util.inc');
+require_once(BOINC_INC . 'user.inc');
+require_once(BOINC_INC . 'batch_site_config.inc');
+require_once(LOCAL_INC . 'html_table.class.php');
+
+set_include_path(
+    get_include_path() .
+    PATH_SEPARATOR . BOINC_INC .
+    PATH_SEPARATOR . CPDN_LOCAL
+);
+
+$xml=simplexml_load_file(PROJECT_PATH . 'ancil_batch_user_config.xml') or die("Error: Cannot create object");
 
 $host= $xml->db_host;
 $dbname=$xml->db_name;
@@ -16,22 +42,13 @@ $user= $xml->batch_user;
 $pass= $xml->batch_passwd;
 
 # include the table tag generatora
-require_once('includes/html_table.class.php');
 
-require_once("../inc/util.inc");
 
 echo <<<EOH
 <html>
 <head>
 <title>Batch Details</title>
 <META NAME="ROBOTS" CONTENT="NOINDEV, NOFOLLOW">
-<script type="text/javascript" src="jquery/jquery-latest.js"></script>
-<script type="text/javascript" src="jquery/jquery.tablesorter.js"></script>
-<script type="text/javascript">
-                        $(document).ready(function() {
-                                $("#myTable").tablesorter();
-                        });
-                </script>
 <style type="text/css">
                         #sortedtable thead th {
                                 color: #00f;
@@ -39,14 +56,14 @@ echo <<<EOH
                                 text-decoration: underline;
                         }
                 </style>
-<link rel="stylesheet" href="cpdn.css">
+<link rel="stylesheet" href="/cpdn.css">
 </head>
 <body>
 EOH;
 echo '<div class="wrap" style="width:100%">';
 echo '<div style="width:100%">';
-echo '<img src="img/OIFS_Home_logo.png" alt="OpenIFS@home" style="width:200px">';
-echo '<img src="img/CPDN_abbrv_logo.png" alt="CPDN" style="width:250px; float:right;">';
+echo '<img src="/img/OIFS_Home_logo.png" alt="OpenIFS@home" style="width:200px">';
+echo '<img src="/img/CPDN_abbrv_logo.png" alt="CPDN" style="width:250px; float:right;">';
 echo '</div>';
 echo '<div style="clear: both;"></div>';
 echo '</div>';
@@ -87,9 +104,9 @@ $row=$result->fetch_row();
 #var_dump($row);
 
 foreach(array_keys($fields_array) as $key) {
-	$inter=explode("as ",$fields_array[$key]);
-	$title=end($inter);
-	echo "<strong>".$title.": </strong>".$row[$key]."<br>";
+    $inter=explode("as ",$fields_array[$key]);
+    $title=end($inter);
+    echo "<strong>".$title.": </strong>".$row[$key]."<br>";
 }
 
 $batch_tot=$row[4];
@@ -162,101 +179,97 @@ $querystring="select ".$fields." pt.paramtypesh as 'File type', round(sum(if(r.o
 
 $result = $link->query($querystring) or die("Error " . mysqli_error($link));
 
-$tablesorter_class='cpdnTable';
-
-class Auto_Table extends HTML_table	{
-	private $db_result = NULL;
-	private $script_tags =array();
-	private $style_tags =array();
-	
+class Auto_Table extends HTML_table    {
+    private $db_result = NULL;
+    private $script_tags =array();
+    private $style_tags =array();
+    
 function make_script($script='script', $content='', $attrs=array()){
-	array_push ($this->script_tags, $this->make_tag($script, $content, $attrs));
-	
-	}
+    array_push ($this->script_tags, $this->make_tag($script, $content, $attrs));
+    
+    }
 
 function display_script(){
-	$mystr='';
-	foreach ($this->script_tags as $tag){
-		$mystr.= "$tag\n";
-		}
-	return $mystr;
-	}
+    $mystr='';
+    foreach ($this->script_tags as $tag){
+        $mystr.= "$tag\n";
+        }
+    return $mystr;
+    }
 
 function make_css($tag){
-	}
+    }
 
 function make_tag($tag, $content='', $attrs=array()){
-	# void tags have no content, and must be closed with />
-	$html_void= array("area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr");
-	$mytag =''; 
-	$mytag ='<'.$tag;
-#	if (is_array($attrs) and count($attrs)>0){
-#		var_dump($attrs);
-#		echo count($attrs);
-#		$mytag .= $this->addAttribs($attrs);
-#		}
-	if (in_array($tag, $html_void)){
-		$mytag .= ' />';
-		}
-	else {
-		$mytag .= ">$content</$tag>";
-		}
-	return $mytag;
-	}
-	
-	
+    # void tags have no content, and must be closed with />
+    $html_void= array("area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr");
+    $mytag =''; 
+    $mytag ='<'.$tag;
+#    if (is_array($attrs) and count($attrs)>0){
+#        var_dump($attrs);
+#        echo count($attrs);
+#        $mytag .= $this->addAttribs($attrs);
+#        }
+    if (in_array($tag, $html_void)){
+        $mytag .= ' />';
+        }
+    else {
+        $mytag .= ">$content</$tag>";
+        }
+    return $mytag;
+    }
+    
+    
 function make_table($db_result){
-	$this->db_result = $db_result;
-	$this->addTSection('thead');
-	$this->addRow();
-	$finfo = $this->db_result->fetch_fields();
-		 foreach ($finfo as $f){
-			$this->addCell($f->name, '', 'header');
-			}
-	$this->addTSection('tbody');
-	while ($row = $db_result->fetch_row()) {
-		$this->addRow();
-		foreach ($row as $cell){ 
-			$this->addCell($cell);
-			}
-		}
-	}
+    $this->db_result = $db_result;
+    $this->addTSection('thead');
+    $this->addRow();
+    $finfo = $this->db_result->fetch_fields();
+         foreach ($finfo as $f){
+            $this->addCell($f->name, '', 'header');
+            }
+    $this->addTSection('tbody');
+    while ($row = $db_result->fetch_row()) {
+        $this->addRow();
+        foreach ($row as $cell){ 
+            $this->addCell($cell);
+            }
+        }
+    }
 }
 
 $row_cnt = $result->num_rows;
 if ($row_cnt > 0) 
 {
-	echo '<br>';
-	echo '<hr>';
-	echo '<h2>Breakdown by Ancillary File</h2>';
-	echo '<br>';
+    echo '<br>';
+    echo '<hr>';
+    echo '<h2>Breakdown by Ancillary File</h2>';
+    echo '<br>';
 
-	$tbl = new Auto_Table('myTable', 'tablesorter');
-	#$tbl->addCaption($query, 'cap', array('id'=> 'tblCap') );
+    $tbl = new Auto_Table('myTable', 'cpdnTable');
+    #$tbl->addCaption($query, 'cap', array('id'=> 'tblCap') );
 
-	$tbl->make_table($result);
-	$tbl->make_script('script',' ',array('src' => "jquery/jquery-latest.js"));
-	echo $tbl->display_script();
-	echo $tbl->display();
+    $tbl->make_table($result);
+    echo $tbl->display();
 }
  mysqli_free_result($result);
  mysqli_close ($link);
 
 //$tbl->addTSection('thead');
 //$tbl->addRow();
-//	 $finfo = $result->fetch_fields();
-//	 foreach ($finfo as $f)// 
-//  		{
-//  		$tbl->addCell($f->name, '', 'header');
-//  		}
+//     $finfo = $result->fetch_fields();
+//     foreach ($finfo as $f)// 
+//          {
+//          $tbl->addCell($f->name, '', 'header');
+//          }
 // $tbl->addTSection('tbody');
 // while ($row = $result->fetch_row()) {
-// 		$tbl->addRow();
-// 		foreach ($row as $cell)
-// 		{ 
-//  		$tbl->addCell($cell);
-//  		}
-//  		}
+//         $tbl->addRow();
+//         foreach ($row as $cell)
+//         { 
+//          $tbl->addCell($cell);
+//          }
+//          }
 
 }
 ?>
