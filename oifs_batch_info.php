@@ -142,7 +142,7 @@ $r1 = escapeshellcmd( $python_env.' '.$script_path.'batch_failure_analysis.py '.
 $output = shell_exec($r1);
 $fail_img=$tmp_path.'Batch_'.$batch_prefix.$batchid.'_fail_analysis.png';
 if (file_exists($fail_img))
-{---
+{
         $b64image = base64_encode(file_get_contents($fail_img));
             echo "<img src ='data:image/png;base64,$b64image' alt='failure_analysis' style='width:80%;float:right'>";
 }

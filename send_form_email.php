@@ -132,7 +132,7 @@ if(isset($_POST['email'])) {
     $email_message .= "Last Name: ".clean_string($last_name)."\n";
     $email_message .= "Affiliation: ".clean_string($affil)."\n";
     $email_message .= "Email: ".clean_string($email_from)."\n";
-    $email_message .= "Message: ".clean_string($comment)."\n";
+    $email_message .= "Message: ".clean_string($comments)."\n";
  
 // create email headers
 $headers = 'From: '.$email_from."\r\n".

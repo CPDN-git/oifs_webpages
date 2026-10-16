@@ -32,21 +32,6 @@ set_include_path(
     PATH_SEPARATOR . BOINC_INC .
     PATH_SEPARATOR . CPDN_LOCAL
 );
-?>
-<html>
-<style>
-img.one {
-    height: auto;
-    width: auto;
-}
-
-img.two {
-    width: 70%;
-}
-</style>
-
-<?php 
-
 
 # include the table tag generatora
 
@@ -71,11 +56,26 @@ $output2 = shell_exec($r2);
 $img_name= "batch_".$batch_prefix.$batchid."_cpu_times.png";
 $img_name2= "Batch_".$batch_prefix.$batchid."_timings.png";
 
-echo '<head>';
-echo '<title>CPDN Statistics</title>';
-echo '<META NAME="ROBOTS" CONTENT="NOINDEV, NOFOLLOW">';
-echo '<link rel="stylesheet" href="/cpdn.css">';
-echo '</head>';
+echo <<<HTML
+<!DOCTYPE html>
+<html>
+<head>
+<title>CPDN Statistics</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/cpdn.css">
+<style>
+img.one {
+    height: auto;
+    width: auto;
+}
+
+img.two {
+    width: 70%;
+}
+</style>
+</head>
+<body>
+HTML;
 echo '<div class="wrap" style="width:100%">';
 echo '<div style="width:100%">';
 echo '<img src="/img/OIFS_Home_logo.png" alt="OpenIFS@home" style="width:200px">';
@@ -83,13 +83,12 @@ echo '<img src="/img/CPDN_abbrv_logo.png" alt="CPDN" style="width:250px; float:r
 echo '</div>';
 echo '<div style="clear: both;"></div>';
 echo '</div>';
-echo '<body>';
 echo '<hr>';
-echo '<h1>CPU time taken on batch '.$batch_prefix.$batchid.'</h2>';
+echo '<h1>CPU time taken on batch '.$batch_prefix.$batchid.'</h1>';
 $img_path=$host_url_path.'/readimage.php?path=tmp_batch/'.$img_name;
 echo '<img class="two" src="'.$img_path.'" alt="Batch CPU times">';
 echo '<hr>';
-echo '<h1>Run times for batch '.$batch_prefix.$batchid.'</h2>';
+echo '<h1>Run times for batch '.$batch_prefix.$batchid.'</h1>';
 $img_path2=$host_url_path.'/readimage.php?path=tmp_batch/'.$img_name2;
 echo '<img class="two" src="'.$img_path2.'" alt="Batch Timings">';
 echo '<hr>';
