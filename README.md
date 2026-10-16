@@ -21,7 +21,7 @@ LOG_DIR=/storage/www/cpdnboinc/log_aurai
 BOINC_HOME=/home/boinc
 PYTHON_ENV=/home/boinc/miniconda3/envs/py3new/bin/python
 
-0 */4 * * * $PYTHON_ENV $BOINC_HOME/cpdnboinc/oifs_webpages/oifs_main_batch_status.py CPDN_DEV > $DEV_LOG_DIR/oifs_main_batch_status.log
+0 */4 * * * $PYTHON_ENV $BOINC_HOME/cpdnboinc/oifs_webpages/oifs_main_batch_status.py CPDN > $LOG_DIR/oifs_main_batch_status.log
 ```
 
 
