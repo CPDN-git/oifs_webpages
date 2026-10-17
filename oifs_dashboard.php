@@ -7,45 +7,56 @@
     Refactored by Glenn & Gemini for aurai with CPDN related files now in 'html/user/cpdn'.
 */
 
-// Force PHP to show errors
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Load the host-specific configuration before defining paths from its variables.
+// Its legacy dev-site detection expects the working directory to be html/user.
+if (!chdir(__DIR__ . '/..')) {
+    http_response_code(500);
+    exit('Unable to select the BOINC web directory.');
+}
+$config_file = __DIR__ . '/../../inc/batch_site_config.inc';
+if (!is_readable($config_file)) {
+    http_response_code(500);
+    exit('Batch site configuration is unavailable.');
+}
+require_once($config_file);
+
+// A supported host must supply all settings; an empty batch prefix is valid.
+foreach (array(
+    'project_path', 'base_path', 'oifs_path', 'python_env', 'script_path',
+    'host_url_path', 'ms_host_url_path', 'batch_prefix', 'project', 'site', 'hostname'
+) as $setting) {
+    if (!isset($$setting) || !is_string($$setting) ||
+        ($setting !== 'batch_prefix' && $$setting === '')) {
+        error_log('Missing batch site configuration setting: ' . $setting);
+        http_response_code(500);
+        exit('Batch site configuration is incomplete for this host.');
+    }
+}
 
 // =========================================================================
-// 1. SERVER-SIDE PATHS (PHP) - Always use explicit absolute paths
+// 1. SERVER-SIDE PATHS (PHP) - Derived from the host configuration
 // =========================================================================
-define('PROJECT_PATH', realpath(__DIR__ . '/../../..') . '/');   // i.e. /storage/www/cpdnboinc
-define('CPDN_LOCAL',   __DIR__ );
-define('BOINC_INC',    PROJECT_PATH . 'html/inc/');
-define('LOCAL_INC',    __DIR__ . '/include/');
+define('PROJECT_PATH', rtrim($project_path, '/') . '/');
+define('CPDN_LOCAL', PROJECT_PATH . 'html/user/cpdn');
+define('BOINC_INC', PROJECT_PATH . 'html/inc/');
+define('LOCAL_INC', CPDN_LOCAL . '/include/');
 
 // =========================================================================
-// 2. CLIENT-SIDE PATHS (HTML) - *MUST* always start with "/" to target the domain root
-//    e.g. src="/img/mylogo.png"  and not  src="../img/mylogo.png"
-//    Where "/img/mylogo.png"   means  main.cpdn.org/img/mylogo.png
+// 2. CLIENT-SIDE PATHS (HTML) - Start with "/" or a configured absolute URL
 // =========================================================================
 
-
-//  Now switch to boinc's html root so all the includes load correctly
-chdir(CPDN_LOCAL . '/..');
-
-// Load BOINC using its absolute server location
-require_once(BOINC_INC . 'util.inc');
-
-// Load custom local classes explicitly
-require_once(LOCAL_INC . 'html_table.class.php');
-
-// Load cpdn custom config XML
-$xml = simplexml_load_file(PROJECT_PATH . "ancil_batch_user_config.xml")
-    or die("Error: Configuration file missing.");
-
-//  Set the global include paths, including ours.
+// Set search paths before loading BOINC and its nested includes.
 set_include_path(
     get_include_path() .
     PATH_SEPARATOR . BOINC_INC .
     PATH_SEPARATOR . CPDN_LOCAL
 );
+
+require_once(BOINC_INC . 'util.inc');
+require_once(LOCAL_INC . 'html_table.class.php');
+
+$xml = simplexml_load_file(PROJECT_PATH . 'ancil_batch_user_config.xml')
+    or die('Error: Configuration file missing.');
 
 //  Set the database variables
 $host= $xml->db_host;
@@ -53,7 +64,6 @@ $dbname=$xml->db_name;
 $boinc_dbname=$xml->boinc_db_name;
 $user= $xml->batch_user;
 $pass= $xml->batch_passwd;
-$hostname = gethostname();
 
 $ms_host= $xml->ancil_db_host;
 $ms_dbname=$xml->ancil_db_name;
@@ -61,12 +71,19 @@ $ms_boinc_dbname=$xml->ancil_boinc_db_name;
 $ms_user= $xml->ancil_user;
 $ms_pass= $xml->ancil_passwd;
 
+// Normalize URL roots and retain the /cpdn deployment directory.
+$local_page_url = rtrim($host_url_path, '/') . '/cpdn';
+$main_page_url = rtrim($ms_host_url_path, '/') . '/cpdn';
+$main_ensemble_url = htmlspecialchars(
+    $main_page_url . '/oifs_xml_generation.php', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'
+);
+
 //  Set SQL queries for later
 $table="cpdn_batch b join $dbname.cpdn_project p on p.id=b.projectid join $boinc_dbname.app a on a.id=b.appid";
 $ms_table="cpdn_batch b join $ms_dbname.cpdn_project p on p.id=b.projectid join $ms_boinc_dbname.app a on a.id=appid";
 
-$fields='concat(\'<a href='.$host_url_path.'/oifs_batch_info.php?batchid=\',b.id,\'>'.$batch_prefix.'\',b.id,\'</a>\') as Batch,';
-$ms_fields='concat(\'<a href='.$ms_host_url_path.'/oifs_batch_info.php?batchid=\',b.id,\'>\',b.id,\'</a>\') as Batch,';
+$fields='concat(\'<a href='.$local_page_url.'/oifs_batch_info.php?batchid=\',b.id,\'>'.$batch_prefix.'\',b.id,\'</a>\') as Batch,';
+$ms_fields='concat(\'<a href='.$main_page_url.'/oifs_batch_info.php?batchid=\',b.id,\'>\',b.id,\'</a>\') as Batch,';
 
 $fopen=" b.number_of_workunits as 'Ensemble Size', date(b.submit_time) as 'Submit Date', b.name as Name,substring_index(b.owner,'<',1) as Owner, b.description as Description";
 $fclosed=" b.number_of_workunits as 'Ensemble Size',date(b.submit_time) as 'Submit Date', b.archive_status as Status, b.name as Name,substring_index(b.owner,'<',1) as Owner, b.description as Description";
@@ -125,17 +142,35 @@ EOH;
 <td width="5%"></td>
 <td><a href="/cpdn/oifs_upload_form.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Upload Files</button></a></td>
 <td><a href="/cpdn/oifs_search.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Search Files</button></a></td>
-<td><a href="https://main.cpdn.org/cpdn/oifs_xml_generation.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Main Ensemble</button></a></td>
+<td><a href="<?php echo $main_ensemble_url; ?>"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Main Ensemble</button></a></td>
 <td><a href="https://trello.com/b/fnvZafWI/cpdn-main-work-site-submissions"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Main Site Trello</button></a></td>
 </tr>
 </table>
 <?php
 
-$r = escapeshellcmd( $python_env.' '.$base_path.'oifs_webpages/oifs_batch_status.py CPDN');
-$output = shell_exec($r);
+function run_dashboard_status($python, $script, $target_project) {
+    if (!is_executable($python) || !is_file($script) || !is_readable($script) || !is_callable('exec')) {
+        error_log('Dashboard statistics processor unavailable: ' . $script);
+        return;
+    }
+    $command = implode(' ', array_map('escapeshellarg', array($python, $script, $target_project)));
+    $output = array();
+    $exit_status = 1;
+    try {
+        exec($command . ' 2>&1', $output, $exit_status);
+    } catch (Throwable $error) {
+        error_log('Dashboard statistics could not start: ' . $script . ': ' . $error->getMessage());
+        return;
+    }
+    if ($exit_status !== 0) {
+        error_log('Dashboard statistics failed: ' . $script . ': ' . implode("\n", $output));
+    }
+}
 
-$r = escapeshellcmd( $python_env.' '.$base_path.'oifs_webpages/oifs_main_batch_status.py CPDN');
-$output = shell_exec($r);
+$oifs_scripts = rtrim($oifs_path, '/') . '/oifs_webpages/';
+run_dashboard_status($python_env, $oifs_scripts . 'oifs_batch_status.py', $project);
+// The main-site panel continues to refresh CPDN statistics on every host.
+run_dashboard_status($python_env, $oifs_scripts . 'oifs_main_batch_status.py', 'CPDN');
 
 $query_open ="SELECT $fields_open FROM $table $condition_open $order";
 $query_closed ="SELECT $fields_closed FROM $table $condition_closed $order";
