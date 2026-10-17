@@ -8,7 +8,9 @@
 */
 
 // Load the host-specific configuration before defining paths from its variables.
-// Its legacy dev-site detection expects the working directory to be html/user.
+// Its legacy site detection expects the working directory to be html/user, whereas
+// all CPDN/OIFS pages are now located in html/user/cpdn.
+
 if (!chdir(__DIR__ . '/..')) {
     http_response_code(500);
     exit('Unable to select the BOINC web directory.');
@@ -20,29 +22,18 @@ if (!is_readable($config_file)) {
 }
 require_once($config_file);
 
-// A supported host must supply all settings; an empty batch prefix is valid.
-foreach (array(
-    'project_path', 'base_path', 'oifs_path', 'python_env', 'script_path',
-    'host_url_path', 'ms_host_url_path', 'batch_prefix', 'project', 'site', 'hostname'
-) as $setting) {
-    if (!isset($$setting) || !is_string($$setting) ||
-        ($setting !== 'batch_prefix' && $$setting === '')) {
-        error_log('Missing batch site configuration setting: ' . $setting);
-        http_response_code(500);
-        exit('Batch site configuration is incomplete for this host.');
-    }
-}
 
 // =========================================================================
-// 1. SERVER-SIDE PATHS (PHP) - Derived from the host configuration
+// 1. SERVER-SIDE PATHS (PHP) - Derived from the host config in batch_site_config.xml
 // =========================================================================
-define('PROJECT_PATH', rtrim($project_path, '/') . '/');
-define('CPDN_LOCAL', PROJECT_PATH . 'html/user/cpdn');
-define('BOINC_INC', PROJECT_PATH . 'html/inc/');
-define('LOCAL_INC', CPDN_LOCAL . '/include/');
+define('CPDN_LOCAL', project_path . 'html/user/cpdn');
+define('BOINC_INC',  project_path . 'html/inc/');
+define('LOCAL_INC',  CPDN_LOCAL . '/include/');
 
 // =========================================================================
-// 2. CLIENT-SIDE PATHS (HTML) - Start with "/" or a configured absolute URL
+// 2. CLIENT-SIDE PATHS (HTML) - Must start with "/" or a configured absolute URL
+//    as all CPDN/OIFS paths are now in html/user/cpdn and BOINC uses relative
+//    paths by default.
 // =========================================================================
 
 // Set search paths before loading BOINC and its nested includes.
@@ -55,7 +46,7 @@ set_include_path(
 require_once(BOINC_INC . 'util.inc');
 require_once(LOCAL_INC . 'html_table.class.php');
 
-$xml = simplexml_load_file(PROJECT_PATH . 'ancil_batch_user_config.xml')
+$xml = simplexml_load_file(project_path . 'ancil_batch_user_config.xml')
     or die('Error: Configuration file missing.');
 
 //  Set the database variables

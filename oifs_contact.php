@@ -1,16 +1,26 @@
 <?php
-// Force PHP to show errors
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+
+// Load the host-specific configuration before defining paths from its variables.
+// Its legacy site detection expects the working directory to be html/user, whereas
+// all CPDN/OIFS pages are now located in html/user/cpdn.
+
+if (!chdir(__DIR__ . '/..')) {
+    http_response_code(500);
+    exit('Unable to select the BOINC web directory.');
+}
+$config_file = __DIR__ . '/../../inc/batch_site_config.inc';
+if (!is_readable($config_file)) {
+    http_response_code(500);
+    exit('Batch site configuration is unavailable.');
+}
+require_once($config_file);
 
 // =========================================================================
 // 1. SERVER-SIDE PATHS (PHP) - Always use explicit absolute paths
 // =========================================================================
-define('PROJECT_PATH', realpath(__DIR__ . '/../../..') . '/');   // i.e. /storage/www/cpdnboinc
-define('CPDN_LOCAL',   __DIR__ );
-define('BOINC_INC',    PROJECT_PATH . 'html/inc/');
-define('LOCAL_INC',    __DIR__ . '/include/');
+define('CPDN_LOCAL',   project_path . 'html/user/cpdn' );
+define('BOINC_INC',    project_path . 'html/inc/');
+define('LOCAL_INC',    CPDN_LOCAL . '/include/');
 
 // =========================================================================
 // 2. CLIENT-SIDE PATHS (HTML) - *MUST* always start with "/" to target the domain root
@@ -18,11 +28,6 @@ define('LOCAL_INC',    __DIR__ . '/include/');
 //    Where "/img/mylogo.png"   means  main.cpdn.org/img/mylogo.png
 // =========================================================================
 
-
-//  Now switch to boinc's html root so all the includes load correctly
-chdir(CPDN_LOCAL . '/..');
-
-require_once(BOINC_INC . 'batch_site_config.inc');
 
 set_include_path(
     get_include_path() .
