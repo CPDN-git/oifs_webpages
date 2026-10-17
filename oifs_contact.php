@@ -18,8 +18,8 @@ require_once($config_file);
 // =========================================================================
 // 1. SERVER-SIDE PATHS (PHP) - Always use explicit absolute paths
 // =========================================================================
-define('CPDN_LOCAL',   project_path . 'html/user/cpdn' );
-define('BOINC_INC',    project_path . 'html/inc/');
+define('CPDN_LOCAL',   $project_path . 'html/user/cpdn' );
+define('BOINC_INC',    $project_path . 'html/inc/');
 define('LOCAL_INC',    CPDN_LOCAL . '/include/');
 
 // =========================================================================

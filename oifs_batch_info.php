@@ -16,8 +16,8 @@ require_once($config_file);
 // =========================================================================
 // 1. SERVER-SIDE PATHS (PHP) - Derived from the host configuration
 // =========================================================================
-define('CPDN_LOCAL', project_path . 'html/user/cpdn');
-define('BOINC_INC', project_path . 'html/inc/');
+define('CPDN_LOCAL', $project_path . 'html/user/cpdn');
+define('BOINC_INC', $project_path . 'html/inc/');
 define('LOCAL_INC', CPDN_LOCAL . '/include/');
 
 // =========================================================================
@@ -35,7 +35,7 @@ require_once(BOINC_INC . 'util.inc');
 require_once(BOINC_INC . 'user.inc');
 require_once(LOCAL_INC . 'html_table.class.php');
 
-$xml=simplexml_load_file(project_path . 'ancil_batch_user_config.xml') or die("Error: Cannot create object");
+$xml=simplexml_load_file($project_path . 'ancil_batch_user_config.xml') or die("Error: Cannot create object");
 
 $host= $xml->db_host;
 $dbname=$xml->db_name;

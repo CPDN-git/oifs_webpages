@@ -16,8 +16,8 @@ require_once($config_file);
 // =========================================================================
 // 1. SERVER-SIDE PATHS (PHP) - Derived from the host configuration
 // =========================================================================
-define('CPDN_LOCAL', project_path . 'html/user/cpdn');  // project_path comes from batch_site_config.inc
-define('BOINC_INC', project_path . 'html/inc/');
+define('CPDN_LOCAL', $project_path . 'html/user/cpdn');  // project_path comes from batch_site_config.inc
+define('BOINC_INC', $project_path . 'html/inc/');
 define('LOCAL_INC', CPDN_LOCAL . '/include/');
 
 // =========================================================================
@@ -40,7 +40,7 @@ $user = get_logged_in_user();
 if (in_array($user->email_addr,$allowed_uploaders)){
 
 
-$xml=simplexml_load_file(project_path . 'ancil_batch_user_config.xml') or die("Error: Cannot create object");
+$xml=simplexml_load_file($project_path . 'ancil_batch_user_config.xml') or die("Error: Cannot create object");
 
 $host= $xml->db_host;
 $dbname=$xml->db_name;
