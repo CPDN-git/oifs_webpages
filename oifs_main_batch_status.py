@@ -45,6 +45,7 @@ server_state={'1' : 'RESULT_SERVER_STATE_INACTIVE',\
 
 today=time.strftime('%Y-%m-%d')
 today_title=time.strftime('%Y-%m-%d %H:%M')
+PLOT_SIZE = (12.5, 5)
 
 class BatchDB:
     #database connection info - starts empty
@@ -190,18 +191,30 @@ def get_tot_wu():
         max_results_per_wu["Batch"+str(int(lbatch[i]['batchno']))]=int(lbatch[i]['max_wu'] or 0)
     return tot_workunits,max_results_per_wu
 
+def save_status_image(out_path, message):
+    """Replace any previous statistics image when there is nothing to plot."""
+    fig = plt.figure(figsize=PLOT_SIZE)
+    try:
+        fig.text(0.5, 0.5, message, ha='center', va='center', fontsize=14)
+        fig.savefig(os.path.join(out_path, 'oifs_batch_statistics_main.png'))
+    finally:
+        plt.close(fig)
+
+
 def plot_batch_stats(out_path,batch_prefix):
     # Set the plot font size
     font = {'family' : 'sans-serif','size':14}
     matplotlib.rc('font', **font)
     sbatch=get_sbatch()
     if sbatch is None:
-        print("No open OpenIFS batches; skipping plot.", file=sys.stderr)
+        print("No active OpenIFS batches; writing status image.")
+        save_status_image(out_path, "No active batches")
         return
     print("Starting from batch"+str(sbatch))
     batch_stats,batch_names=query_database2(sbatch)
     if len(batch_stats) == 0:
-        print("No result statistics for open OpenIFS batches; skipping plot.", file=sys.stderr)
+        print("No result statistics for open OpenIFS batches; writing status image.", file=sys.stderr)
+        save_status_image(out_path, "No result statistics for active batches")
         return
     test_batches=get_test_batches(sbatch)
     print(test_batches)
@@ -219,7 +232,8 @@ def plot_batch_stats(out_path,batch_prefix):
             continue
         valid_rows.append(index)
     if not valid_rows:
-        print("No batches with valid totals; skipping plot.", file=sys.stderr)
+        print("No batches with valid totals; writing status image.", file=sys.stderr)
+        save_status_image(out_path, "No batches with valid workunit totals")
         return
     batch_stats = batch_stats[valid_rows]
 
@@ -296,7 +310,7 @@ def plot_batch_stats(out_path,batch_prefix):
     plt.legend(loc="upper left",prop={"size": 8},fancybox=True,numpoints=1)
     plt.tight_layout()
     plt.grid(linestyle=':',zorder=0)
-    fig.set_size_inches(12.5, 5)
+    fig.set_size_inches(*PLOT_SIZE)
     fig.savefig(out_path+"oifs_batch_statistics_main.png")
     plt.close(fig)
 
