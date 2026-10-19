@@ -15,7 +15,7 @@ if (!chdir(__DIR__ . '/..')) {
     http_response_code(500);
     exit('Unable to select the BOINC web directory.');
 }
-$config_file = __DIR__ . '/include/batch_site_config.inc';
+$config_file = __DIR__ . '/../../project/batch_site_config.inc';
 if (!is_readable($config_file)) {
     http_response_code(500);
     exit('Batch site configuration is unavailable.');
@@ -29,6 +29,7 @@ require_once($config_file);
 define('CPDN_LOCAL', $project_path . 'html/user/cpdn');
 define('BOINC_INC',  $project_path . 'html/inc/');
 define('LOCAL_INC',  CPDN_LOCAL . '/include/');
+define('PROJECT_INC', rtrim($project_path, '/') . '/html/project/');
 
 // =========================================================================
 // 2. CLIENT-SIDE PATHS (HTML) - Must start with "/" or a configured absolute URL
@@ -40,7 +41,8 @@ define('LOCAL_INC',  CPDN_LOCAL . '/include/');
 set_include_path(
     get_include_path() .
     PATH_SEPARATOR . BOINC_INC .
-    PATH_SEPARATOR . CPDN_LOCAL
+    PATH_SEPARATOR . CPDN_LOCAL .
+    PATH_SEPARATOR . PROJECT_INC
 );
 
 require_once(BOINC_INC . 'util.inc');

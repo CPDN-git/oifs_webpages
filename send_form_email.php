@@ -9,7 +9,7 @@ if (!chdir(__DIR__ . '/..')) {
     http_response_code(500);
     exit('Unable to select the BOINC web directory.');
 }
-$config_file = __DIR__ . '/include/batch_site_config.inc';
+$config_file = __DIR__ . '/../../project/batch_site_config.inc';
 if (!is_readable($config_file)) {
     http_response_code(500);
     exit('Batch site configuration is unavailable.');
@@ -24,13 +24,15 @@ define('PROJECT_PATH', rtrim($project_path, '/') . '/');
 define('CPDN_LOCAL', PROJECT_PATH . 'html/user/cpdn');
 define('BOINC_INC', PROJECT_PATH . 'html/inc/');
 define('LOCAL_INC', CPDN_LOCAL . '/include/');
+define('PROJECT_INC', rtrim($project_path, '/') . '/html/project/');
 
-require_once(BOINC_INC . 'oifs_contacts.inc');
+require_once(PROJECT_INC . 'oifs_contacts.inc');
 
 set_include_path(
     get_include_path() .
     PATH_SEPARATOR . BOINC_INC .
-    PATH_SEPARATOR . CPDN_LOCAL
+    PATH_SEPARATOR . CPDN_LOCAL .
+    PATH_SEPARATOR . PROJECT_INC
 );
 
 
