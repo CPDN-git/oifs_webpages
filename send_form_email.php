@@ -4,25 +4,27 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// =========================================================================
-// 1. SERVER-SIDE PATHS (PHP) - Always use explicit absolute paths
-// =========================================================================
-define('PROJECT_PATH', realpath(__DIR__ . '/../../..') . '/');   // i.e. /storage/www/cpdnboinc
-define('CPDN_LOCAL',   __DIR__ );
-define('BOINC_INC',    PROJECT_PATH . 'html/inc/');
-define('LOCAL_INC',    __DIR__ . '/include/');
+// This handler remains in html/user; the shared configuration lives under cpdn.
+if (!chdir(__DIR__)) {
+    http_response_code(500);
+    exit('Unable to select the BOINC web directory.');
+}
+$config_file = __DIR__ . '/cpdn/include/batch_site_config.inc';
+if (!is_readable($config_file)) {
+    http_response_code(500);
+    exit('Batch site configuration is unavailable.');
+}
+require_once($config_file);
+if (!isset($project_path) || !is_string($project_path) || $project_path === '') {
+    http_response_code(500);
+    exit('Batch site configuration is incomplete for this host.');
+}
 
-// =========================================================================
-// 2. CLIENT-SIDE PATHS (HTML) - *MUST* always start with "/" to target the domain root
-//    e.g. src="/img/mylogo.png"  and not  src="../img/mylogo.png"
-//    Where "/img/mylogo.png"   means  main.cpdn.org/img/mylogo.png
-// =========================================================================
+define('PROJECT_PATH', rtrim($project_path, '/') . '/');
+define('CPDN_LOCAL', PROJECT_PATH . 'html/user/cpdn');
+define('BOINC_INC', PROJECT_PATH . 'html/inc/');
+define('LOCAL_INC', CPDN_LOCAL . '/include/');
 
-
-//  Now switch to boinc's html root so all the includes load correctly
-chdir(CPDN_LOCAL . '/..');
-
-require_once(BOINC_INC . 'batch_site_config.inc');
 require_once(BOINC_INC . 'oifs_contacts.inc');
 
 set_include_path(

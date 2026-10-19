@@ -24,4 +24,9 @@ PYTHON_ENV=/home/boinc/miniconda3/envs/py3new/bin/python
 0 */4 * * * $PYTHON_ENV $BOINC_HOME/cpdnboinc/oifs_webpages/oifs_main_batch_status.py CPDN > $LOG_DIR/oifs_main_batch_status.log
 ```
 
+## PHP site configuration
 
+All deployed PHP pages load `html/user/cpdn/include/batch_site_config.inc`.
+Move the server-managed configuration there before deploying these pages.
+The email handler remains in `html/user` and loads the same file through
+`cpdn/include/batch_site_config.inc`. Deployment does not copy this configuration.

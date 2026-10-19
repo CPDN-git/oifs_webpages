@@ -15,7 +15,7 @@ if (!chdir(__DIR__ . '/..')) {
     http_response_code(500);
     exit('Unable to select the BOINC web directory.');
 }
-$config_file = __DIR__ . '/../../inc/batch_site_config.inc';
+$config_file = __DIR__ . '/include/batch_site_config.inc';
 if (!is_readable($config_file)) {
     http_response_code(500);
     exit('Batch site configuration is unavailable.');
@@ -24,7 +24,7 @@ require_once($config_file);
 
 
 // =========================================================================
-// 1. SERVER-SIDE PATHS (PHP) - Derived from the host config in batch_site_config.xml
+// 1. SERVER-SIDE PATHS (PHP) - Derived from the host config in batch_site_config.inc
 // =========================================================================
 define('CPDN_LOCAL', $project_path . 'html/user/cpdn');
 define('BOINC_INC',  $project_path . 'html/inc/');
