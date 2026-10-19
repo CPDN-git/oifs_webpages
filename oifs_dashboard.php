@@ -159,7 +159,7 @@ function run_dashboard_status($python, $script, $target_project) {
     }
 }
 
-$oifs_scripts = rtrim($oifs_path, '/') . '/oifs_webpages/';
+$oifs_scripts = rtrim($oifs_repo_root, '/') . '/oifs_webpages/';
 // The main-site panel continues to refresh CPDN statistics on every host.
 run_dashboard_status($python_env, $oifs_scripts . 'oifs_main_batch_status.py', 'CPDN');
 
