@@ -18,7 +18,6 @@ require_once($config_file);
 // =========================================================================
 define('CPDN_LOCAL', $project_path . 'html/user/cpdn');  // project_path comes from batch_site_config.inc
 define('BOINC_INC', $project_path . 'html/inc/');
-define('LOCAL_INC', CPDN_LOCAL . '/include/');
 define('PROJECT_INC', rtrim($project_path, '/') . '/html/project/');
 
 // =========================================================================

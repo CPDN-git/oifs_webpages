@@ -28,7 +28,6 @@ require_once($config_file);
 // =========================================================================
 define('CPDN_LOCAL', $project_path . 'html/user/cpdn');
 define('BOINC_INC',  $project_path . 'html/inc/');
-define('LOCAL_INC',  CPDN_LOCAL . '/include/');
 define('PROJECT_INC', rtrim($project_path, '/') . '/html/project/');
 
 // =========================================================================
@@ -46,7 +45,7 @@ set_include_path(
 );
 
 require_once(BOINC_INC . 'util.inc');
-require_once(LOCAL_INC . 'html_table.class.php');
+require_once(PROJECT_INC . 'html_table.class.php');
 
 $xml = simplexml_load_file($project_path . 'ancil_batch_user_config.xml')
     or die('Error: Configuration file missing.');
