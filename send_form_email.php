@@ -4,12 +4,12 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// This handler remains in html/user; the shared configuration lives under cpdn.
-if (!chdir(__DIR__)) {
+// This handler lives in html/user/cpdn; BOINC expects html/user as cwd.
+if (!chdir(__DIR__ . '/..')) {
     http_response_code(500);
     exit('Unable to select the BOINC web directory.');
 }
-$config_file = __DIR__ . '/cpdn/include/batch_site_config.inc';
+$config_file = __DIR__ . '/include/batch_site_config.inc';
 if (!is_readable($config_file)) {
     http_response_code(500);
     exit('Batch site configuration is unavailable.');

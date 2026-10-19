@@ -59,20 +59,11 @@ cpdn_pages=(
     oifs_batch_info.php
     oifs_contact.php
     oifs_dashboard.php
+    send_form_email.php
 )
 
 for page in "${cpdn_pages[@]}"
 do
     deploy_file "$DEPLOYDIR" "$REPODIR/$page"
-done
-
-#  keep this in boinc html root for now
-root_pages=(
-    send_form_email.php
-)
-
-for page in "${root_pages[@]}"
-do
-    deploy_file "$HTMLROOT" "$REPODIR/$page"
 done
 
