@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// This handler lives in html/user/cpdn; BOINC expects html/user as cwd.
+// This handler lives in html/user/project; BOINC expects html/user as cwd.
 if (!chdir(__DIR__ . '/..')) {
     http_response_code(500);
     exit('Unable to select the BOINC web directory.');
@@ -21,7 +21,7 @@ if (!isset($project_path) || !is_string($project_path) || $project_path === '') 
 }
 
 define('PROJECT_PATH', rtrim($project_path, '/') . '/');
-define('CPDN_LOCAL', PROJECT_PATH . 'html/user/cpdn');
+define('CPDN_LOCAL', PROJECT_PATH . 'html/user/project');
 define('BOINC_INC', PROJECT_PATH . 'html/inc/');
 define('PROJECT_INC', rtrim($project_path, '/') . '/html/project/');
 

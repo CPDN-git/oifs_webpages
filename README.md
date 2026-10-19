@@ -28,8 +28,8 @@ PYTHON_ENV=/home/boinc/miniconda3/envs/py3new/bin/python
 
 All deployed PHP pages load `html/project/batch_site_config.inc`.
 Move the server-managed configuration there before deploying these pages.
-The email handler is also deployed to `html/user/cpdn` and loads the same file
+The email handler is also deployed to `html/user/project` and loads the same file
 through `../../project/batch_site_config.inc`. Deployment does not copy this configuration.
 
 Deployment routes any repository-owned `.inc` files to `html/project`;
-PHP pages remain in `html/user/cpdn`. Site configuration is managed on the server.
+PHP pages remain in `html/user/project`. Site configuration is managed on the server.

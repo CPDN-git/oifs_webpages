@@ -16,7 +16,7 @@ require_once($config_file);
 // =========================================================================
 // 1. SERVER-SIDE PATHS (PHP) - Derived from the host configuration
 // =========================================================================
-define('CPDN_LOCAL', $project_path . 'html/user/cpdn');  // project_path comes from batch_site_config.inc
+define('CPDN_LOCAL', $project_path . 'html/user/project');  // project_path comes from batch_site_config.inc
 define('BOINC_INC', $project_path . 'html/inc/');
 define('PROJECT_INC', rtrim($project_path, '/') . '/html/project/');
 

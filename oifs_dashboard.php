@@ -4,12 +4,12 @@
     OpenIFS Dashboard
 
     Originally coded by Sarah for pandia.
-    Refactored by Glenn & Gemini for aurai with CPDN related files now in 'html/user/cpdn'.
+    Refactored by Glenn & Gemini for aurai with CPDN related files now in 'html/user/project'.
 */
 
 // Load the host-specific configuration before defining paths from its variables.
 // Its legacy site detection expects the working directory to be html/user, whereas
-// all CPDN/OIFS pages are now located in html/user/cpdn.
+// all CPDN/OIFS pages are now located in html/user/project.
 
 if (!chdir(__DIR__ . '/..')) {
     http_response_code(500);
@@ -26,13 +26,13 @@ require_once($config_file);
 // =========================================================================
 // 1. SERVER-SIDE PATHS (PHP) - Derived from the host config in batch_site_config.inc
 // =========================================================================
-define('CPDN_LOCAL', $project_path . 'html/user/cpdn');
+define('CPDN_LOCAL', $project_path . 'html/user/project');
 define('BOINC_INC',  $project_path . 'html/inc/');
 define('PROJECT_INC', rtrim($project_path, '/') . '/html/project/');
 
 // =========================================================================
 // 2. CLIENT-SIDE PATHS (HTML) - Must start with "/" or a configured absolute URL
-//    as all CPDN/OIFS paths are now in html/user/cpdn and BOINC uses relative
+//    as all CPDN/OIFS paths are now in html/user/project and BOINC uses relative
 //    paths by default.
 // =========================================================================
 
@@ -63,9 +63,9 @@ $ms_boinc_dbname=$xml->ancil_boinc_db_name;
 $ms_user= $xml->ancil_user;
 $ms_pass= $xml->ancil_passwd;
 
-// Normalize URL roots and retain the /cpdn deployment directory.
-$local_page_url = rtrim($host_url_path, '/') . '/cpdn';
-$main_page_url = rtrim($ms_host_url_path, '/') . '/cpdn';
+// Normalize URL roots and retain the /project deployment directory.
+$local_page_url = rtrim($host_url_path, '/') . '/project';
+$main_page_url = rtrim($ms_host_url_path, '/') . '/project';
 $main_ensemble_url = htmlspecialchars(
     $main_page_url . '/oifs_xml_generation.php', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'
 );
@@ -132,8 +132,8 @@ EOH;
 <td><a href="https://www.ecmwf.int/en/research/projects/openifs"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">OpenIFS</button></a></td>
 <td><a href="https://drive.google.com/open?id=12_Dfl_Aw1Zbw_AN3T71qINzTWzb1ssfM"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Training Notes</button></a></td>
 <td width="5%"></td>
-<td><a href="/cpdn/oifs_upload_form.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Upload Files</button></a></td>
-<td><a href="/cpdn/oifs_search.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Search Files</button></a></td>
+<td><a href="/project/oifs_upload_form.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color: #DCDCDC;">Upload Files</button></a></td>
+<td><a href="/project/oifs_search.php"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Search Files</button></a></td>
 <td><a href="<?php echo $main_ensemble_url; ?>"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Create Main Ensemble</button></a></td>
 <td><a href="https://trello.com/b/fnvZafWI/cpdn-main-work-site-submissions"><button style="height:50px;font-size:14px;border-radius: 8px;background-color:#DCDCDC;">Main Site Trello</button></a></td>
 </tr>

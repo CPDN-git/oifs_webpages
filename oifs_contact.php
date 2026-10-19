@@ -2,7 +2,7 @@
 
 // Load the host-specific configuration before defining paths from its variables.
 // Its legacy site detection expects the working directory to be html/user, whereas
-// all CPDN/OIFS pages are now located in html/user/cpdn.
+// all CPDN/OIFS pages are now located in html/user/project.
 
 if (!chdir(__DIR__ . '/..')) {
     http_response_code(500);
@@ -18,7 +18,7 @@ require_once($config_file);
 // =========================================================================
 // 1. SERVER-SIDE PATHS (PHP) - Always use explicit absolute paths
 // =========================================================================
-define('CPDN_LOCAL',   $project_path . 'html/user/cpdn' );
+define('CPDN_LOCAL',   $project_path . 'html/user/project' );
 define('BOINC_INC',    $project_path . 'html/inc/');
 define('PROJECT_INC', rtrim($project_path, '/') . '/html/project/');
 
@@ -63,7 +63,7 @@ echo '</div>';
 echo '<hr>';
 ?>
 <h1>New Collaboration Enquiry Form</h1>
-<form name="contactform" method="post" action="/cpdn/send_form_email.php">
+<form name="contactform" method="post" action="/project/send_form_email.php">
 <table width="100%" border="0" style="border:none;">
 <tr class="nohover"><td Width=10%>First Name:</td><td width=90%><input type="text" name="FirstName" size="20"></td></tr>
 <tr class="nohover"><td>Last Name:</td><td><input type="text" id="LastName" name="LastName" size="20"></td></tr>

@@ -16,7 +16,7 @@ require_once($config_file);
 // =========================================================================
 // 1. SERVER-SIDE PATHS (PHP) - Derived from the host configuration
 // =========================================================================
-define('CPDN_LOCAL', $project_path . 'html/user/cpdn');
+define('CPDN_LOCAL', $project_path . 'html/user/project');
 define('BOINC_INC', $project_path . 'html/inc/');
 define('PROJECT_INC', rtrim($project_path, '/') . '/html/project/');
 
@@ -171,7 +171,7 @@ if (file_exists($batch_img))
 
 echo "<br>";
 echo "A breakdown of <a href=https://www.cpdn.org/".$boinc_dbname."/batch_os_breakdown.php?batchid=".$batchid.">successful completions by Operating System</a><br>";
-echo "Restricted access to <a href=".$host_url_path."/oifs_batch_cpu_analysis.php?batchid=".$batchid.">batch CPU analysis</a>";
+echo "Restricted access to <a href=".rtrim($host_url_path, '/')."/project/oifs_batch_cpu_analysis.php?batchid=".$batchid.">batch CPU analysis</a>";
 echo "<br>";
 if ($hostname == 'pandia'){
 
