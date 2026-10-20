@@ -151,11 +151,11 @@ if (file_exists($fail_img))
 }
 
 echo "<h2>Batch Statistics</h2><br><strong>Last updated on:</strong> ".$row_stats[0]."<br>";
-echo "<br><a href=".$host_url_path."/batch_completions.php?batchid=".$batchid."><font color=#00FF7F><strong>Success: </strong></font>$nbsp".$row_stats[3]." (".$pct_success."%)</a>";
+echo "<br><a href=".rtrim($host_url_path, '/')."/project/batch_completions.php?batchid=".$batchid."><font color=#00FF7F><strong>Success: </strong></font>$nbsp".$row_stats[3]." (".$pct_success."%)</a>";
 echo "<br><font color=#FF8080><strong>Fails: </strong></font>$nbsp".$row_stats[5]." (".$pct_fail."%)";
-echo "<br><a href=".$host_url_path."/batch_hard_fails.php?batchid=".$batchid."><font color=#FF0000><strong>Hard Fail: </strong></font>$nbsp".$row_stats[4]." (".$pct_h_fail."%)</a>";
-echo "<br><a href=".$host_url_path."/batch_running.php?batchid=".$batchid."><font color=#FFA500><strong>Running: </strong></font>$nbsp".$row_stats[2]." (".$pct_running."%)</a>";
-echo "<br><a href=".$host_url_path."/batch_unsent.php?batchid=".$batchid."><font color=#4169E1><strong>Unsent: </strong></font>$nbsp".$row_stats[1]." (".$pct_unsent."%)</a><br>";
+echo "<br><a href=".rtrim($host_url_path, '/')."/project/batch_hard_fails.php?batchid=".$batchid."><font color=#FF0000><strong>Hard Fail: </strong></font>$nbsp".$row_stats[4]." (".$pct_h_fail."%)</a>";
+echo "<br><a href=".rtrim($host_url_path, '/')."/project/batch_running.php?batchid=".$batchid."><font color=#FFA500><strong>Running: </strong></font>$nbsp".$row_stats[2]." (".$pct_running."%)</a>";
+echo "<br><a href=".rtrim($host_url_path, '/')."/project/batch_unsent.php?batchid=".$batchid."><font color=#4169E1><strong>Unsent: </strong></font>$nbsp".$row_stats[1]." (".$pct_unsent."%)</a><br>";
 
 echo "<br>";
 $tmp_path=$base_path.'tmp_batch/';
@@ -170,7 +170,7 @@ if (file_exists($batch_img))
 
 
 echo "<br>";
-echo "A breakdown of <a href=https://www.cpdn.org/".$boinc_dbname."/batch_os_breakdown.php?batchid=".$batchid.">successful completions by Operating System</a><br>";
+echo "A breakdown of <a href=".rtrim($host_url_path, '/')."/project/batch_os_breakdown.php?batchid=".$batchid.">successful completions by Operating System</a><br>";
 echo "Restricted access to <a href=".rtrim($host_url_path, '/')."/project/oifs_batch_cpu_analysis.php?batchid=".$batchid.">batch CPU analysis</a>";
 echo "<br>";
 if ($hostname == 'pandia'){
