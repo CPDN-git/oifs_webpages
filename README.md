@@ -1,4 +1,4 @@
-# OpenIFS webpages and batch scripts
+# OpenIFS webpages and batch scripts -- NOW MERGED INTO cpdn_webpages -- DO NOT USE!
 
 OpenIFS collection of PHP for deployment into the project web pages, and python code to be run by cron under boinc for generation of OpenIFS specific batch stats.
 
